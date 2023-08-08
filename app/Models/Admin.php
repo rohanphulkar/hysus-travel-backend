@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Uuid;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class Admin extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -31,12 +30,15 @@ class User extends Authenticatable implements JWTSubject
             $model->setAttribute($model->getKeyName(), Uuid::uuid4());
         });
     }
+
+
+
     public function getJWTIdentifier(){
         return $this->getKey();
     }
 
     public function getJWTCustomClaims(){
-        return ['email'=>$this->email,'name'=>$this->name];
+        return ['id'=>$this->id,'email'=>$this->email,'name'=>$this->name];
     }
 
     /**
@@ -48,7 +50,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
-        'is_admin'
+        'phone'
     ];
 
     /**
@@ -70,13 +72,4 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-
-    public function bookings() {
-        return $this->hasMany(Booking::class);
-    }
-
-    public function packages() {
-        return $this->hasManyThrough(Package::class, Booking::class);
-    }
 }
